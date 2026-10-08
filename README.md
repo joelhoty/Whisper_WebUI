@@ -1,6 +1,34 @@
 # Whisper-WebUI
 A Gradio-based browser interface for [Whisper](https://github.com/openai/whisper). You can use it as an Easy Subtitle Generator!
 
+## 程式碼來源與本次修改
+
+本專案衍生自 [jhj0517/Whisper-WebUI](https://github.com/jhj0517/Whisper-WebUI)，
+原作者為 [jhj0517](https://github.com/jhj0517)。本次修改以原專案提交
+[`c3bb3b1`](https://github.com/jhj0517/Whisper-WebUI/commit/c3bb3b18e959826b28b1192486a8d5b361b6a4e0)
+為基礎；原有功能、程式碼及大部分文件來自原專案，保留原專案的 [LICENSE](LICENSE)。
+此衍生版本維護於 [joelhoty/Whisper_WebUI](https://github.com/joelhoty/Whisper_WebUI)。
+
+本次修改（2026-10-08，提交 [`6e35810`](https://github.com/joelhoty/Whisper_WebUI/commit/6e35810d666bc7338deacac888ce9c6cb90e92c7)）
+針對 Colab 安裝與啟動的相容性問題：
+
+- 將應用程式依賴集中至 `requirements-common.txt`，讓 Colab 與其他安裝方式共用版本設定。
+- 新增 Colab 安裝與啟動程式，使用獨立 `venv`；若 Notebook 核心的 Python 版本超出支援範圍，另行建立 Python 3.12 環境。
+- 配對 CUDA 12.6 的 PyTorch 2.8.0、TorchAudio 2.8.0 與 TorchVision 0.23.0，並限制 NumPy、pyannote 等相依套件版本。
+- 對 Whisper 的隔離建置環境套用 `setuptools<82`，處理 `pkg_resources` 缺失問題；安裝失敗時停止，並在完成前檢查依賴與啟動匯入。
+- Notebook 預設下載本 repo，可指定其他 repo／分支或使用已上傳的專案；重跑時沿用既有 checkout。
+- 修正 `insanely-fast-whisper` 選項、以參數清單傳遞啟動設定、優先載入虛擬環境的 CUDA 函式庫，並在掛載 Drive 時備份既有輸出。
+- 新增 Colab 啟動流程與 Gradio／i18n 回歸測試，以及對應的 GitHub Actions 檢查。
+
+相關原專案回報：[套件建置失敗 #628](https://github.com/jhj0517/Whisper-WebUI/issues/628)、
+[TorchAudio API 不相容 #606](https://github.com/jhj0517/Whisper-WebUI/issues/606)、
+[Colab i18n 啟動錯誤 #588](https://github.com/jhj0517/Whisper-WebUI/issues/588)。
+
+**驗證狀態：本次修改尚未在 Google Colab 實測，也尚未完成 Colab GPU 的端到端轉錄驗證。**
+目前僅完成本機 12 個回歸測試、Gradio 頁面／設定 API 檢查、Python 語法檢查，
+以及以 Linux／Python 3.12 為目標的依賴解析。上述檢查不代表已確認實際 Colab 安裝、
+GPU 推論、說話者分離或背景音樂分離皆可正常運作。
+
 ![screen](https://github.com/user-attachments/assets/caea3afd-a73c-40af-a347-8d57914b1d0f)
 
 
