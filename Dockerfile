@@ -7,7 +7,7 @@ RUN apt-get update && \
 
 WORKDIR /Whisper-WebUI
 
-COPY requirements.txt .
+COPY requirements.txt requirements-common.txt ./
 
 RUN python3 -m venv venv && \
     . venv/bin/activate && \

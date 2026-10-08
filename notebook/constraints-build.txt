@@ -1,0 +1,3 @@
+# The Whisper fork imports pkg_resources in setup.py (issues #628 / #632).
+# Apply inside isolated build environments with pip's --build-constraint.
+setuptools<82

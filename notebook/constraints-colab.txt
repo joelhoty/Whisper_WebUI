@@ -1,0 +1,8 @@
+# pyannote.audio 3.x and its transitive dependencies use NumPy 1.x APIs.
+numpy==1.26.4
+pyannote.core==5.0.0
+pyannote.database==5.1.3
+pyannote.metrics==3.2.1
+pyannote.pipeline==3.0.1
+# Older audio/UVR dependencies also import pkg_resources at runtime.
+setuptools<82

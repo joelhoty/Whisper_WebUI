@@ -13,6 +13,20 @@ on:
       - intel-gpu
 
 jobs:
+  test-colab-notebook:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check Colab bootstrap and notebook cells
+        run: python -m unittest discover -s tests -p test_colab_notebook.py -v
+      - name: Install Colab UI dependencies
+        run: pip install -c notebook/constraints-colab.txt gradio==5.29.0 gradio-i18n==0.3.1 "huggingface-hub<1" requests
+      - name: Check Colab translation startup
+        run: python -m unittest discover -s tests -p test_colab_i18n.py -v
+
   test:
     runs-on: ubuntu-latest
     strategy:

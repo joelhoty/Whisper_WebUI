@@ -8,7 +8,7 @@ RUN apt-get update && \
 WORKDIR /Whisper-WebUI
 
 COPY backend/ backend/
-COPY requirements.txt requirements.txt
+COPY requirements.txt requirements-common.txt ./
 
 RUN python3 -m venv venv && \
     . venv/bin/activate && \

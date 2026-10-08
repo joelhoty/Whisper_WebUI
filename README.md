@@ -6,7 +6,25 @@ A Gradio-based browser interface for [Whisper](https://github.com/openai/whisper
 
 
 ## Notebook
-If you wish to try this on Colab, you can do it in [here](https://colab.research.google.com/github/jhj0517/Whisper-WebUI/blob/master/notebook/whisper-webui.ipynb)!
+Use [the Colab notebook](notebook/whisper-webui.ipynb) to run this project on Google Colab.
+
+For a modified copy, push **all project files** to your own repository, then open
+`https://colab.research.google.com/github/YOUR_USER/YOUR_REPO/blob/YOUR_BRANCH/notebook/whisper-webui.ipynb`.
+Choose a GPU runtime (for example T4), set `REPOSITORY_URL` to your repository's HTTPS URL
+and leave `REPOSITORY_REF` blank for the default branch, or set it to the branch containing
+your fixes (for example `main`). Run
+Installation followed by Run. Uploading only the notebook does not update the application
+downloaded from GitHub. Alternatively, extract the complete modified project into
+`/content/Whisper-WebUI` and leave `REPOSITORY_URL` empty.
+
+Colab installs the shared application requirements into an isolated `venv`, using Python
+3.10–3.12 (provisioning Python 3.12 if the kernel is newer), matching CUDA 12.6 PyTorch,
+TorchAudio and TorchVision wheels, and constraints for the legacy pyannote dependencies.
+The Whisper fork's build environment uses `setuptools<82` to retain `pkg_resources`.
+Installation stops on errors and checks imports before reporting success. Run uses this
+same environment, so a notebook kernel restart is not required. Re-running Installation
+reuses the existing checkout; after pushing new code, start a fresh Colab runtime to
+download it. Optional Drive mounting preserves existing local outputs in a backup folder.
 
 # Feature
 - Select the Whisper implementation you want to use between :

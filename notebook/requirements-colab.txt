@@ -1,0 +1,7 @@
+# Colab T4/L4/A100: keep the CUDA 12.6 wheel family consistent.
+--extra-index-url https://download.pytorch.org/whl/cu126
+-r ../requirements-common.txt
+-c constraints-colab.txt
+torch==2.8.0
+torchaudio==2.8.0
+torchvision==0.23.0
