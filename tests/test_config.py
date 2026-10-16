@@ -3,6 +3,7 @@ import jiwer
 import os
 import pytest
 import requests
+import tempfile
 import torch
 
 from modules.utils.paths import *
@@ -30,16 +31,13 @@ def is_cuda_available():
 
 
 @functools.lru_cache
-def is_pytube_detected_bot(url: str = TEST_YOUTUBE_URL):
+def is_youtube_download_blocked(url: str = TEST_YOUTUBE_URL):
     try:
-        yt_temp_path = os.path.join("modules", "yt_tmp.wav")
-        if os.path.exists(yt_temp_path):
-            return False
-        yt = get_ytdata(url)
-        audio = get_ytaudio(yt)
+        with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as download_dir:
+            download_ytaudio(url, download_dir)
         return False
     except Exception as e:
-        print(f"Pytube has detected as a bot: {e}")
+        print(f"YouTube download is blocked: {e}")
         return True
 
 

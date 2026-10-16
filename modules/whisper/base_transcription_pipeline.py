@@ -10,6 +10,7 @@ from datetime import datetime
 from faster_whisper.vad import VadOptions
 import gc
 from copy import deepcopy
+import tempfile
 import time
 
 from modules.uvr.music_separator import MusicSeparator
@@ -18,7 +19,7 @@ from modules.utils.paths import (WHISPER_MODELS_DIR, DIARIZATION_MODELS_DIR, OUT
 from modules.utils.constants import *
 from modules.utils.logger import get_logger
 from modules.utils.subtitle_manager import *
-from modules.utils.youtube_manager import get_ytdata, get_ytaudio
+from modules.utils.youtube_manager import download_ytaudio
 from modules.utils.files_manager import get_media_files, format_gradio_files, load_yaml, save_yaml, read_file
 from modules.utils.audio_manager import validate_audio
 from modules.whisper.data_classes import *
@@ -416,21 +417,21 @@ class BaseTranscriptionPipeline(ABC):
             }
 
             progress(0, desc="Loading Audio from Youtube..")
-            yt = get_ytdata(youtube_link)
-            audio = get_ytaudio(yt)
+            with tempfile.TemporaryDirectory(prefix="whisper-webui-yt-", ignore_cleanup_errors=True) as download_dir:
+                audio, title = download_ytaudio(youtube_link, download_dir)
 
-            transcribed_segments, time_for_task = self.run(
-                audio,
-                progress,
-                file_format,
-                add_timestamp,
-                None,
-                *pipeline_params,
-            )
+                transcribed_segments, time_for_task = self.run(
+                    audio,
+                    progress,
+                    file_format,
+                    add_timestamp,
+                    None,
+                    *pipeline_params,
+                )
 
             progress(1, desc="Completed!")
 
-            file_name = safe_filename(yt.title)
+            file_name = safe_filename(title)
             subtitle, file_path = generate_file(
                 output_dir=self.output_dir,
                 output_file_name=file_name,
@@ -441,9 +442,6 @@ class BaseTranscriptionPipeline(ABC):
             )
 
             result_str = f"Done in {self.format_time(time_for_task)}! Subtitle file is in the outputs folder.\n\n{subtitle}"
-
-            if os.path.exists(audio):
-                os.remove(audio)
 
             return result_str, file_path
 

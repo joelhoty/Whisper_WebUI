@@ -61,7 +61,7 @@ def run_asr_pipeline(
     subtitle = read_file(file_paths[0]).split("\n")
     assert calculate_wer(answer, subtitle[2].strip().replace(",", "").replace(".", "")) < 0.1
 
-    if not is_pytube_detected_bot():
+    if not is_youtube_download_blocked():
         subtitle_str, file_path = whisper_inferencer.transcribe_youtube(
             TEST_YOUTUBE_URL,
             "SRT",

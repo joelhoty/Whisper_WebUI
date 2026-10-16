@@ -1,33 +1,41 @@
-from pytubefix import YouTube
-import subprocess
 import os
+from typing import Tuple
+
+from yt_dlp import YoutubeDL
+from yt_dlp.utils import DownloadError
+
+# Optional Netscape-format cookies file. Only needed when YouTube refuses anonymous downloads.
+COOKIES_FILE_ENV = "YOUTUBE_COOKIES_FILE"
 
 
-def get_ytdata(link):
-    return YouTube(link)
+def _ydl_options(**options):
+    options = {"quiet": True, "no_warnings": True, "noprogress": True, "noplaylist": True, **options}
+    cookies_file = os.environ.get(COOKIES_FILE_ENV)
+    if cookies_file:
+        options["cookiefile"] = cookies_file
+    return options
 
 
 def get_ytmetas(link):
-    yt = YouTube(link)
-    return yt.thumbnail_url, yt.title, yt.description
-
-
-def get_ytaudio(ytdata: YouTube):
-    # Somehow the audio is corrupted so need to convert to valid audio file.
-    # Fix for : https://github.com/jhj0517/Whisper-WebUI/issues/304
-
-    audio_path = ytdata.streams.get_audio_only().download(filename=os.path.join("modules", "yt_tmp.wav"))
-    temp_audio_path = os.path.join("modules", "yt_tmp_fixed.wav")
-
+    if not link or not link.strip():
+        return None, None, ""
     try:
-        subprocess.run([
-            'ffmpeg', '-y',
-            '-i', audio_path,
-            temp_audio_path
-        ], check=True)
+        with YoutubeDL(_ydl_options(skip_download=True)) as ydl:
+            info = ydl.extract_info(link.strip(), download=False)
+    except DownloadError as e:
+        return None, None, f"Failed to load video info: {e}"
+    return info.get("thumbnail"), info.get("title"), info.get("description")
 
-        os.replace(temp_audio_path, audio_path)
-        return audio_path
-    except subprocess.CalledProcessError as e:
-        print(f"Error during ffmpeg conversion: {e}")
-        return None
+
+def download_ytaudio(link, output_dir) -> Tuple[str, str]:
+    """Download the audio of a YouTube video as WAV into output_dir. Returns (audio_path, title)."""
+    options = _ydl_options(
+        format="bestaudio/best",
+        outtmpl=os.path.join(output_dir, "audio.%(ext)s"),
+        # Re-encode so the input is always a valid audio file (#304).
+        postprocessors=[{"key": "FFmpegExtractAudio", "preferredcodec": "wav"}],
+    )
+    with YoutubeDL(options) as ydl:
+        info = ydl.extract_info(link.strip(), download=True)
+    audio_path = info["requested_downloads"][0]["filepath"]
+    return audio_path, info.get("title") or info["id"]
