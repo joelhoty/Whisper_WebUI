@@ -38,6 +38,36 @@ A Gradio-based browser interface for [Whisper](https://github.com/openai/whisper
 `av<19` 已在本機以 Python 3.12 驗證 `faster-whisper` 可解碼音訊，但尚未在 Colab 完成端到端轉錄；
 說話者分離與背景音樂分離亦尚未實測。
 
+### 依賴套件的 wheel
+
+`openai-whisper`、`uvr`、`pyrubberband` 預設從 [`deps-v1` Release](https://github.com/joelhoty/Whisper_WebUI/releases/tag/deps-v1)
+下載 wheel；本機、Docker、Colab 安裝都不會抓原始碼，也不需要 `git` 或建置步驟。
+fork 只用來保存原始碼，供日後修改或重新打包：
+
+| 套件 | 原始碼 fork | commit |
+|---|---|---|
+| `openai-whisper` | [joelhoty/jhj0517-whisper](https://github.com/joelhoty/jhj0517-whisper) | `197244318d5d75d9d195bff0705ab05a591684ec` |
+| `uvr` | [joelhoty/ultimatevocalremover_api](https://github.com/joelhoty/ultimatevocalremover_api) | `3543be1349ce601568787b69cca0c1f8acba7c2e` |
+| `pyrubberband` | [joelhoty/pyrubberband](https://github.com/joelhoty/pyrubberband) | `0287782593eabd77fcf29682899d3e9b25cbb5c6` |
+
+若要改從原始碼安裝，將 `requirements-common.txt` 對應的行換成 fork 的固定 commit，例如：
+
+```
+pyrubberband @ git+https://github.com/joelhoty/pyrubberband.git@0287782593eabd77fcf29682899d3e9b25cbb5c6
+```
+
+安裝時會 clone 並建置，速度較慢，`openai-whisper` 也可能再遇到 `pkg_resources` 建置問題，因此一般建議維持使用 wheel。
+
+更新這三個套件時：
+
+1. 在 fork 推送新的 commit。
+2. 從新的 commit 建置 wheel 並發布新的 Release（例如 `deps-v2`）：
+   ```
+   pip wheel --no-deps --build-constraint notebook/constraints-build.txt -w wheels git+https://github.com/joelhoty/<repo>.git@<commit>
+   gh release create deps-v2 wheels/*.whl --title "Dependency wheels (deps-v2)"
+   ```
+3. 將 `requirements-common.txt` 的網址與 `#sha256=` 改為新 wheel 的值（`sha256sum wheels/*.whl`）。
+
 ![screen](https://github.com/user-attachments/assets/caea3afd-a73c-40af-a347-8d57914b1d0f)
 
 
