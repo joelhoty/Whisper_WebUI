@@ -24,10 +24,19 @@ A Gradio-based browser interface for [Whisper](https://github.com/openai/whisper
 [TorchAudio API 不相容 #606](https://github.com/jhj0517/Whisper-WebUI/issues/606)、
 [Colab i18n 啟動錯誤 #588](https://github.com/jhj0517/Whisper-WebUI/issues/588)。
 
-**驗證狀態：本次修改尚未在 Google Colab 實測，也尚未完成 Colab GPU 的端到端轉錄驗證。**
-目前僅完成本機 12 個回歸測試、Gradio 頁面／設定 API 檢查、Python 語法檢查，
-以及以 Linux／Python 3.12 為目標的依賴解析。上述檢查不代表已確認實際 Colab 安裝、
-GPU 推論、說話者分離或背景音樂分離皆可正常運作。
+後續修改（2026-10-20）：
+
+- Notebook 將子程序輸出轉送到儲存格，讓安裝錯誤與 Gradio 公開網址可見；重跑時先 `git pull` 既有 checkout。
+- 覆寫 Colab 核心傳入的 `MPLBACKEND`，避免虛擬環境匯入 matplotlib 失敗。
+- 限制 `av<19`：PyAV 19 移除 `av.open()` 的 `metadata_errors` 參數，`faster-whisper 1.1.1` 解碼音訊時會失敗。
+- 原本從原作者 GitHub 安裝的 `openai-whisper`（jhj0517-whisper）、`uvr`、`pyrubberband`，
+  改為從 fork 至 [joelhoty](https://github.com/joelhoty) 的 repo 固定 commit 建置 wheel，
+  發布於 [`deps-v1` Release](https://github.com/joelhoty/Whisper_WebUI/releases/tag/deps-v1)，
+  並以 sha256 驗證；來源 commit 與授權列於 Release 說明。
+
+**驗證狀態：已在 Google Colab（T4、Python 3.13 核心）完成安裝、依賴檢查與啟動 Gradio 公開網址。**
+`av<19` 已在本機以 Python 3.12 驗證 `faster-whisper` 可解碼音訊，但尚未在 Colab 完成端到端轉錄；
+說話者分離與背景音樂分離亦尚未實測。
 
 ![screen](https://github.com/user-attachments/assets/caea3afd-a73c-40af-a347-8d57914b1d0f)
 
