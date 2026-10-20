@@ -1,10 +1,10 @@
 # Application dependencies shared by local, Docker, and Colab installations.
 # openai-whisper, uvr and pyrubberband are wheels built from pinned commits of the joelhoty forks;
-# see the deps-v1 release notes for sources. Rebuild and publish a new release to update them.
+# see the deps-v2 release notes for sources. Rebuild and publish a new release to update them.
 matplotlib
 torch>=2.8.0,<2.9.0 # Needs to be harmonized with torchaudio
 torchaudio>=2.8.0,<2.9.0 # 2.9 deprecates used functions
-openai-whisper @ https://github.com/joelhoty/Whisper_WebUI/releases/download/deps-v1/openai_whisper-20240930-py3-none-any.whl#sha256=51ac81c138234915abbdc51700d7058cc44c8cd6227efc078dfae0b8b1a74f9e
+openai-whisper @ https://github.com/joelhoty/Whisper_WebUI/releases/download/deps-v2/openai_whisper-20240930-py3-none-any.whl#sha256=51ac81c138234915abbdc51700d7058cc44c8cd6227efc078dfae0b8b1a74f9e
 faster-whisper==1.1.1
 av<19 # faster-whisper 1.1.1 passes metadata_errors to av.open(), removed in PyAV 19
 transformers==4.47.1
@@ -13,5 +13,5 @@ gradio-i18n==0.3.1
 yt-dlp[default,deno] # Unpinned on purpose: YouTube changes often require the latest release.
 ruamel.yaml==0.18.6
 pyannote.audio==3.3.2
-uvr @ https://github.com/joelhoty/Whisper_WebUI/releases/download/deps-v1/uvr-0.1-py3-none-any.whl#sha256=449a9859e8e6eedcf5f33a39f4451d3d9e4f77b4be411fdbd2896749ef95f746
-pyrubberband @ https://github.com/joelhoty/Whisper_WebUI/releases/download/deps-v1/pyrubberband-0.3.0-py3-none-any.whl#sha256=f9a783a48e760c7ce2ad78a7a408a9375138868c7a78c24967fae64d512aca62
+uvr @ https://github.com/joelhoty/Whisper_WebUI/releases/download/deps-v2/uvr-0.1-py3-none-any.whl#sha256=9c26a9cbf8c5ef1e3964ff73d9718560180b649d8abc268a4abaf593a9dd4d88
+pyrubberband @ https://github.com/joelhoty/Whisper_WebUI/releases/download/deps-v2/pyrubberband-0.3.0-py3-none-any.whl#sha256=f9a783a48e760c7ce2ad78a7a408a9375138868c7a78c24967fae64d512aca62

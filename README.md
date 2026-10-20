@@ -31,7 +31,7 @@ A Gradio-based browser interface for [Whisper](https://github.com/openai/whisper
 - 限制 `av<19`：PyAV 19 移除 `av.open()` 的 `metadata_errors` 參數，`faster-whisper 1.1.1` 解碼音訊時會失敗。
 - 原本從原作者 GitHub 安裝的 `openai-whisper`（jhj0517-whisper）、`uvr`、`pyrubberband`，
   改為從 fork 至 [joelhoty](https://github.com/joelhoty) 的 repo 固定 commit 建置 wheel，
-  發布於 [`deps-v1` Release](https://github.com/joelhoty/Whisper_WebUI/releases/tag/deps-v1)，
+  發布於 [`deps-v2` Release](https://github.com/joelhoty/Whisper_WebUI/releases/tag/deps-v2)，
   並以 sha256 驗證；來源 commit 與授權列於 Release 說明。
 
 **驗證狀態：已在 Google Colab（T4、Python 3.13 核心）完成安裝、依賴檢查與啟動 Gradio 公開網址。**
@@ -40,18 +40,30 @@ A Gradio-based browser interface for [Whisper](https://github.com/openai/whisper
 
 ### 依賴套件的 wheel
 
-`openai-whisper`、`uvr`、`pyrubberband` 預設從 [`deps-v1` Release](https://github.com/joelhoty/Whisper_WebUI/releases/tag/deps-v1)
+`openai-whisper`、`uvr`、`pyrubberband` 預設從 [`deps-v2` Release](https://github.com/joelhoty/Whisper_WebUI/releases/tag/deps-v2)
 下載 wheel；本機、Docker、Colab 安裝都不會抓原始碼，也不需要 `git` 或建置步驟。
 fork 只用來保存原始碼，供日後修改或重新打包。三者皆為原專案作者 jhj0517 修改過的版本，
-本 repo 再 fork 一份並固定 commit，未另做修改：
+本 repo 再 fork 一份並固定 commit。程式碼未另做修改；`uvr` 的 fork 僅新增兩個打包 commit，
+把內含第三方程式碼的授權一併放入 wheel（見下方說明）：
 
 | 套件 | 原始專案 | jhj0517 的修改版 | 本 repo 使用的 fork | commit | 授權 |
 |---|---|---|---|---|---|
 | `openai-whisper` | [openai/whisper](https://github.com/openai/whisper) | [jhj0517/jhj0517-whisper](https://github.com/jhj0517/jhj0517-whisper) | [joelhoty/jhj0517-whisper](https://github.com/joelhoty/jhj0517-whisper) | `197244318d5d75d9d195bff0705ab05a591684ec` | MIT |
-| `uvr` | [NextAudioGen/ultimatevocalremover_api](https://github.com/NextAudioGen/ultimatevocalremover_api) | [jhj0517/ultimatevocalremover_api](https://github.com/jhj0517/ultimatevocalremover_api) | [joelhoty/ultimatevocalremover_api](https://github.com/joelhoty/ultimatevocalremover_api) | `3543be1349ce601568787b69cca0c1f8acba7c2e` | MIT |
+| `uvr` | [NextAudioGen/ultimatevocalremover_api](https://github.com/NextAudioGen/ultimatevocalremover_api) | [jhj0517/ultimatevocalremover_api](https://github.com/jhj0517/ultimatevocalremover_api) | [joelhoty/ultimatevocalremover_api](https://github.com/joelhoty/ultimatevocalremover_api) | `7ec2d42e24cd606f3b1db88952db233efc66f09d` | MIT |
 | `pyrubberband` | [bmcfee/pyrubberband](https://github.com/bmcfee/pyrubberband) | [jhj0517/pyrubberband](https://github.com/jhj0517/pyrubberband) | [joelhoty/pyrubberband](https://github.com/joelhoty/pyrubberband) | `0287782593eabd77fcf29682899d3e9b25cbb5c6` | ISC |
 
 各 wheel 內含原專案的授權資訊；詳細來源亦列於 Release 說明。
+
+`uvr` 內含第三方程式碼，授權全文與來源說明打包於 wheel 的 `uvr/third_party/`：
+
+| 目錄 | 來源 | 授權 |
+|---|---|---|
+| `models_dir/demucs` | [facebookresearch/demucs](https://github.com/facebookresearch/demucs) | MIT，© Meta Platforms, Inc. |
+| `models_dir/mdx`、`mdxc`、`vr_network` | [Anjok07/ultimatevocalremovergui](https://github.com/Anjok07/ultimatevocalremovergui) `lib_v5` | MIT，© 2022 Anjok07、Aufr33 |
+| （VR 架構原作） | [tsurumeso/vocal-remover](https://github.com/tsurumeso/vocal-remover) | MIT，© 2019 tsurumeso |
+| （MDX-Net 原作） | [kuielab/mdx-net](https://github.com/kuielab/mdx-net) | MIT，© 2020 KINoAI |
+
+模型權重於執行時才下載，不包含在本 repo 或 wheel 中，使用時須遵守各模型的條款；例如 NLLB 翻譯模型為 CC-BY-NC 4.0（不可商用），pyannote 說話者分離模型須先在 Hugging Face 同意使用條款。
 
 若要改從原始碼安裝，將 `requirements-common.txt` 對應的行換成 fork 的固定 commit，例如：
 
@@ -64,10 +76,10 @@ pyrubberband @ git+https://github.com/joelhoty/pyrubberband.git@0287782593eabd77
 更新這三個套件時：
 
 1. 在 fork 推送新的 commit。
-2. 從新的 commit 建置 wheel 並發布新的 Release（例如 `deps-v2`）：
+2. 從新的 commit 建置 wheel 並發布新的 Release（例如 `deps-v3`）：
    ```
    pip wheel --no-deps --build-constraint notebook/constraints-build.txt -w wheels git+https://github.com/joelhoty/<repo>.git@<commit>
-   gh release create deps-v2 wheels/*.whl --title "Dependency wheels (deps-v2)"
+   gh release create deps-v3 wheels/*.whl --title "Dependency wheels (deps-v3)"
    ```
 3. 將 `requirements-common.txt` 的網址與 `#sha256=` 改為新 wheel 的值（`sha256sum wheels/*.whl`）。
 
