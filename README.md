@@ -71,6 +71,91 @@ pyrubberband @ git+https://github.com/joelhoty/pyrubberband.git@0287782593eabd77
    ```
 3. 將 `requirements-common.txt` 的網址與 `#sha256=` 改為新 wheel 的值（`sha256sum wheels/*.whl`）。
 
+## 程式架構
+
+### 目錄結構
+
+```
+Whisper-WebUI/
+├── app.py                      # Gradio 介面入口：解析命令列參數、建立各分頁（檔案／YouTube／麥克風／翻譯／背景音樂分離）
+├── modules/                    # 核心功能，WebUI 與 REST API 共用
+│   ├── whisper/
+│   │   ├── whisper_factory.py              # 依 --whisper_type 建立對應的轉錄實作
+│   │   ├── base_transcription_pipeline.py  # 轉錄流程主體：檔案／YouTube／麥克風輸入 → 處理 → 字幕檔
+│   │   ├── faster_whisper_inference.py     # faster-whisper（CTranslate2，預設）
+│   │   ├── whisper_Inference.py            # openai-whisper
+│   │   ├── insanely_fast_whisper_inference.py  # Hugging Face transformers 版本
+│   │   └── data_classes.py                 # 各階段參數與 Segment 資料結構
+│   ├── vad/silero_vad.py       # 語音活動偵測：去除靜音段，轉錄後還原時間軸
+│   ├── uvr/music_separator.py  # 背景音樂分離（uvr 套件：MDX-Net、Demucs、VR）
+│   ├── diarize/                # 說話者分離（pyannote.audio，需 Hugging Face token）
+│   ├── translation/            # 字幕翻譯：nllb_inference.py（本機 NLLB 模型）、deepl_api.py（DeepL API）
+│   ├── ui/htmls.py             # 介面上的 HTML／CSS 片段
+│   └── utils/
+│       ├── youtube_manager.py  # 以 yt-dlp 取得 YouTube 資訊與音訊
+│       ├── audio_manager.py    # 檢查音訊能否解碼
+│       ├── subtitle_manager.py # 輸出 SRT、WebVTT、TXT、LRC 等字幕格式
+│       ├── paths.py            # 模型、輸出、設定檔路徑
+│       └── ...
+├── backend/                    # FastAPI REST API（選用），以 SQLite 記錄非同步任務狀態
+│   ├── main.py
+│   ├── routers/                # /transcription、/vad、/bgm-separation、/task
+│   └── db/、common/、configs/
+├── configs/
+│   ├── default_parameters.yaml # 記住上次使用的介面參數
+│   └── translation.yaml        # 介面多語系文字
+├── notebook/                   # Google Colab
+│   ├── whisper-webui.ipynb     # Notebook：安裝、掛載 Drive、設定參數、啟動
+│   ├── colab_runtime.py        # 在獨立 venv 安裝依賴並啟動 app.py
+│   └── requirements-colab.txt、constraints-*.txt  # Colab 專用版本限制
+├── requirements-common.txt     # 所有安裝方式共用的依賴
+├── requirements.txt            # 本機／Docker 安裝（指定 PyTorch CUDA 版本後引用 requirements-common.txt）
+├── models/                     # 執行時下載的模型（Whisper、NLLB、UVR、Diarization）
+├── outputs/                    # 產生的字幕、翻譯與分離後的音訊
+├── tests/                      # 回歸測試
+└── Dockerfile、docker-compose.yaml、Install.*、start-webui.*
+```
+
+### 轉錄流程
+
+`BaseTranscriptionPipeline.run()` 依序執行下列步驟，選用步驟由介面上的設定決定：
+
+```mermaid
+flowchart LR
+    A[輸入<br/>檔案／YouTube／麥克風] --> B[檢查音訊<br/>audio_manager]
+    B --> C{背景音樂分離?}
+    C -- 是 --> D[UVR 分離人聲<br/>uvr/music_separator]
+    C -- 否 --> E
+    D --> E{VAD?}
+    E -- 是 --> F[去除靜音<br/>vad/silero_vad]
+    E -- 否 --> G
+    F --> G[Whisper 轉錄<br/>whisper_factory 選定的實作]
+    G --> H[還原時間軸<br/>VAD 時]
+    H --> I{說話者分離?}
+    I -- 是 --> J[pyannote<br/>diarize/]
+    I -- 否 --> K
+    J --> K[輸出字幕<br/>subtitle_manager]
+    K --> L[(outputs/)]
+```
+
+字幕翻譯（NLLB／DeepL）與單獨的背景音樂分離是各自獨立的分頁，讀入字幕或音訊檔後直接輸出到 `outputs/`。
+`backend/` 的 REST API 直接呼叫同一套 `modules/`，不經過 Gradio 介面。
+
+### Colab 執行方式
+
+```mermaid
+flowchart LR
+    N[Notebook 安裝儲存格] -->|git clone／pull| R[本 repo]
+    N -->|子程序| CR[notebook/colab_runtime.py install]
+    CR --> V[建立 Python 3.12 venv<br/>pip install requirements-colab.txt]
+    V --> CK[pip check + app.py --help]
+    RUN[Notebook 執行儲存格] -->|子程序| CR2[colab_runtime.py run]
+    CR2 --> APP[venv 內執行 app.py --share<br/>輸出 Gradio 公開網址]
+```
+
+依賴裝在獨立的 venv，不影響 Colab 核心本身的套件，因此不需要重新啟動執行階段。
+子程序的輸出會轉送到儲存格，安裝錯誤與公開網址都會直接顯示。
+
 ![screen](https://github.com/user-attachments/assets/caea3afd-a73c-40af-a347-8d57914b1d0f)
 
 
