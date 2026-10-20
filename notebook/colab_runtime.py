@@ -27,6 +27,8 @@ def runtime_environment(project_dir=PROJECT_DIR):
     if library_paths:
         env["LD_LIBRARY_PATH"] = os.pathsep.join(library_paths)
     env["PYTHONNOUSERSITE"] = "1"
+    # The Colab kernel exports its inline backend, which the venv does not have.
+    env["MPLBACKEND"] = "Agg"
     env["USE_TF"] = "0"
     env["USE_FLAX"] = "0"
     return env

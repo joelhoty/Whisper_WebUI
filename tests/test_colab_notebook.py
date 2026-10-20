@@ -138,10 +138,12 @@ class ColabRuntimeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             lib = Path(directory) / "venv/lib/python3.12/site-packages/nvidia/cudnn/lib"
             lib.mkdir(parents=True)
-            with patch.dict(os.environ, {"LD_LIBRARY_PATH": "/system/cuda/lib"}):
+            with patch.dict(os.environ, {"LD_LIBRARY_PATH": "/system/cuda/lib",
+                                         "MPLBACKEND": "module://matplotlib_inline.backend_inline"}):
                 env = runtime.runtime_environment(directory)
             self.assertEqual(env["LD_LIBRARY_PATH"].split(os.pathsep), [str(lib), "/system/cuda/lib"])
             self.assertEqual(env["PYTHONNOUSERSITE"], "1")
+            self.assertEqual(env["MPLBACKEND"], "Agg")
 
     def test_launch_uses_venv_and_absolute_working_directory(self):
         with tempfile.TemporaryDirectory() as directory:
