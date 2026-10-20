@@ -42,13 +42,16 @@ A Gradio-based browser interface for [Whisper](https://github.com/openai/whisper
 
 `openai-whisper`、`uvr`、`pyrubberband` 預設從 [`deps-v1` Release](https://github.com/joelhoty/Whisper_WebUI/releases/tag/deps-v1)
 下載 wheel；本機、Docker、Colab 安裝都不會抓原始碼，也不需要 `git` 或建置步驟。
-fork 只用來保存原始碼，供日後修改或重新打包：
+fork 只用來保存原始碼，供日後修改或重新打包。三者皆為原專案作者 jhj0517 修改過的版本，
+本 repo 再 fork 一份並固定 commit，未另做修改：
 
-| 套件 | 原始碼 fork | commit |
-|---|---|---|
-| `openai-whisper` | [joelhoty/jhj0517-whisper](https://github.com/joelhoty/jhj0517-whisper) | `197244318d5d75d9d195bff0705ab05a591684ec` |
-| `uvr` | [joelhoty/ultimatevocalremover_api](https://github.com/joelhoty/ultimatevocalremover_api) | `3543be1349ce601568787b69cca0c1f8acba7c2e` |
-| `pyrubberband` | [joelhoty/pyrubberband](https://github.com/joelhoty/pyrubberband) | `0287782593eabd77fcf29682899d3e9b25cbb5c6` |
+| 套件 | 原始專案 | jhj0517 的修改版 | 本 repo 使用的 fork | commit | 授權 |
+|---|---|---|---|---|---|
+| `openai-whisper` | [openai/whisper](https://github.com/openai/whisper) | [jhj0517/jhj0517-whisper](https://github.com/jhj0517/jhj0517-whisper) | [joelhoty/jhj0517-whisper](https://github.com/joelhoty/jhj0517-whisper) | `197244318d5d75d9d195bff0705ab05a591684ec` | MIT |
+| `uvr` | [NextAudioGen/ultimatevocalremover_api](https://github.com/NextAudioGen/ultimatevocalremover_api) | [jhj0517/ultimatevocalremover_api](https://github.com/jhj0517/ultimatevocalremover_api) | [joelhoty/ultimatevocalremover_api](https://github.com/joelhoty/ultimatevocalremover_api) | `3543be1349ce601568787b69cca0c1f8acba7c2e` | MIT |
+| `pyrubberband` | [bmcfee/pyrubberband](https://github.com/bmcfee/pyrubberband) | [jhj0517/pyrubberband](https://github.com/jhj0517/pyrubberband) | [joelhoty/pyrubberband](https://github.com/joelhoty/pyrubberband) | `0287782593eabd77fcf29682899d3e9b25cbb5c6` | ISC |
+
+各 wheel 內含原專案的授權資訊；詳細來源亦列於 Release 說明。
 
 若要改從原始碼安裝，將 `requirements-common.txt` 對應的行換成 fork 的固定 commit，例如：
 
