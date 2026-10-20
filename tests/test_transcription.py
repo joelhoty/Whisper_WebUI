@@ -1,3 +1,5 @@
+# Modified by joelhoty in 2026 from jhj0517/Whisper-WebUI (Apache-2.0): Used the yt-dlp based YouTube download check.
+# See README.md for the full list of changes.
 import requests
 import pytest
 import gradio as gr

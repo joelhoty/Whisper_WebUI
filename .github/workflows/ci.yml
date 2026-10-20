@@ -1,3 +1,5 @@
+# Modified by joelhoty in 2026 from jhj0517/Whisper-WebUI (Apache-2.0): Added the Colab notebook and bootstrap checks.
+# See README.md for the full list of changes.
 name: CI
 
 on:

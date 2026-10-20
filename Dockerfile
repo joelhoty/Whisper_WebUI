@@ -1,3 +1,5 @@
+# Modified by joelhoty in 2026 from jhj0517/Whisper-WebUI (Apache-2.0): Copied requirements-common.txt for the split requirements.
+# See README.md for the full list of changes.
 FROM debian:bookworm-slim AS builder
 
 RUN apt-get update && \

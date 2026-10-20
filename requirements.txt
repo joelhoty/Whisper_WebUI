@@ -1,3 +1,5 @@
+# Modified by joelhoty in 2026 from jhj0517/Whisper-WebUI (Apache-2.0): Moved shared dependencies to requirements-common.txt.
+# See README.md for the full list of changes.
 --extra-index-url https://download.pytorch.org/whl/cu128
 
 # Update above --extra-index-url according to your device.

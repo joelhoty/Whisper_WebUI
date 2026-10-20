@@ -1,3 +1,5 @@
+# Modified by joelhoty in 2026 from jhj0517/Whisper-WebUI (Apache-2.0): Checked YouTube download blocking with yt-dlp instead of pytubefix.
+# See README.md for the full list of changes.
 import functools
 import jiwer
 import os

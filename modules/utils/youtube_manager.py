@@ -1,3 +1,5 @@
+# Modified by joelhoty in 2026 from jhj0517/Whisper-WebUI (Apache-2.0): Replaced pytubefix with yt-dlp for YouTube metadata and audio downloads.
+# See README.md for the full list of changes.
 import os
 from typing import Tuple
 

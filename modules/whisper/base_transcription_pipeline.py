@@ -1,3 +1,5 @@
+# Modified by joelhoty in 2026 from jhj0517/Whisper-WebUI (Apache-2.0): Downloaded YouTube audio with yt-dlp into a per-request temporary directory.
+# See README.md for the full list of changes.
 import os
 import whisper
 import ctranslate2

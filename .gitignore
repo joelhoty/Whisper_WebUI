@@ -1,3 +1,5 @@
+# Modified by joelhoty in 2026 from jhj0517/Whisper-WebUI (Apache-2.0): Ignored local Colab check caches and virtual environment.
+# See README.md for the full list of changes.
 *.wav
 *.png
 *.mp4
