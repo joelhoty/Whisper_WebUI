@@ -220,11 +220,23 @@ download it. Optional Drive mounting preserves existing local outputs in a backu
 
 YouTube 常把 Colab 的 IP 視為機器人而拒絕下載，此時需要提供登入後的 cookies：
 
-1. 用瀏覽器的無痕視窗登入 YouTube（建議使用次要帳號）。
-2. 用 cookies.txt 類的擴充功能匯出 youtube.com 的 cookies（Netscape 格式），匯出後直接關閉該無痕視窗，
-   否則 cookies 會被輪替而很快失效。
-3. 在 Notebook 執行「(Optional) YouTube cookies」儲存格：填入檔案路徑（例如放在 Google Drive），或留白後上傳檔案。
-4. 執行（或停止後重新執行）Run 儲存格。
+**最方便的做法**（直接用平常的瀏覽器視窗）：
+
+1. 在 Chrome 安裝擴充功能「Get cookies.txt LOCALLY」（Firefox 可用「cookies.txt」）。
+2. 在一般視窗開啟 <https://www.youtube.com> 並確認已登入（建議使用次要帳號）。
+3. 點擴充功能圖示，以 Netscape 格式匯出目前網站的 cookies，會下載一個 `www.youtube.com_cookies.txt`。
+4. 在 Notebook 執行「(Optional) YouTube cookies」儲存格：路徑留白後上傳該檔案，或填入檔案路徑（例如放在 Google Drive）。
+5. 執行（或停止後重新執行）Run 儲存格。
+
+這種做法的缺點是 cookies 較快失效：之後繼續用同一個瀏覽器看 YouTube 時 cookies 會被輪替，
+匯出的檔案可能幾小時到幾天就不能用。再次出現同樣的錯誤時，重新匯出並上傳一次即可。
+
+**較耐用的做法**（cookies 不會被輪替）：改在無痕視窗匯出。
+
+1. 無痕視窗預設停用擴充功能：先在一般視窗開啟 `chrome://extensions`，按該擴充功能的「詳細資料」，
+   打開「允許在無痕模式中執行」。
+2. 開新的無痕視窗登入 YouTube，在同一個分頁前往 `https://www.youtube.com/robots.txt` 後匯出 cookies。
+3. 不要登出，直接關閉整個無痕視窗，之後照上面的步驟 4、5 操作。
 
 該儲存格只是設定環境變數 `YOUTUBE_COOKIES_FILE`；本機或 Docker 執行時，啟動前自行設定這個變數即可。
 cookies 檔等同登入憑證，請勿提交到 repo 或分享給他人。yt-dlp 會把更新後的 cookies 寫回同一個檔案。
