@@ -132,6 +132,19 @@ class ColabNotebookTests(unittest.TestCase):
             "--password", password, "--whisper_type", "insanely-fast-whisper",
         ])
 
+    def test_cookies_path_reaches_the_app_environment(self):
+        with tempfile.TemporaryDirectory() as directory:
+            cookies = Path(directory) / "cookies.txt"
+            cookies.touch()
+            source = cell_source("YouTube cookies").replace(
+                "YOUTUBE_COOKIES_FILE = ''", "YOUTUBE_COOKIES_FILE = " + repr(str(cookies)))
+            with patch.dict(os.environ):
+                exec(source, {})
+                self.assertEqual(runtime.runtime_environment(directory)["YOUTUBE_COOKIES_FILE"], str(cookies))
+                missing = source.replace("cookies.txt", "missing.txt")
+                with self.assertRaises(FileNotFoundError):
+                    exec(missing, {})
+
 
 class ColabRuntimeTests(unittest.TestCase):
     def test_cuda_libraries_precede_system_libraries(self):

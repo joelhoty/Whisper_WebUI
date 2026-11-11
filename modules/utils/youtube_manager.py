@@ -18,6 +18,18 @@ def _ydl_options(**options):
     return options
 
 
+def _explain(error) -> str:
+    """Add what to do next when YouTube rejects the request as coming from a bot."""
+    message = str(error)
+    if "Sign in to confirm" not in message:
+        return message
+    if os.environ.get(COOKIES_FILE_ENV):
+        return f"{message}\nThe cookies in {COOKIES_FILE_ENV} were rejected; export a fresh cookies.txt."
+    return (f"{message}\nYouTube blocked this request as a bot. Export your youtube.com cookies as cookies.txt "
+            f"and set {COOKIES_FILE_ENV} to its path before starting the app "
+            "(on Colab: run the \"YouTube cookies\" cell, then re-run the Run cell).")
+
+
 def get_ytmetas(link):
     if not link or not link.strip():
         return None, None, ""
@@ -25,7 +37,7 @@ def get_ytmetas(link):
         with YoutubeDL(_ydl_options(skip_download=True)) as ydl:
             info = ydl.extract_info(link.strip(), download=False)
     except DownloadError as e:
-        return None, None, f"Failed to load video info: {e}"
+        return None, None, f"Failed to load video info: {_explain(e)}"
     return info.get("thumbnail"), info.get("title"), info.get("description")
 
 
@@ -37,7 +49,10 @@ def download_ytaudio(link, output_dir) -> Tuple[str, str]:
         # Re-encode so the input is always a valid audio file (#304).
         postprocessors=[{"key": "FFmpegExtractAudio", "preferredcodec": "wav"}],
     )
-    with YoutubeDL(options) as ydl:
-        info = ydl.extract_info(link.strip(), download=True)
+    try:
+        with YoutubeDL(options) as ydl:
+            info = ydl.extract_info(link.strip(), download=True)
+    except DownloadError as e:
+        raise RuntimeError(_explain(e)) from e
     audio_path = info["requested_downloads"][0]["filepath"]
     return audio_path, info.get("title") or info["id"]

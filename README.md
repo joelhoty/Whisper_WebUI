@@ -193,6 +193,19 @@ same environment, so a notebook kernel restart is not required. Re-running Insta
 reuses the existing checkout; after pushing new code, start a fresh Colab runtime to
 download it. Optional Drive mounting preserves existing local outputs in a backup folder.
 
+### YouTube 出現「Sign in to confirm you're not a bot」
+
+YouTube 常把 Colab 的 IP 視為機器人而拒絕下載，此時需要提供登入後的 cookies：
+
+1. 用瀏覽器的無痕視窗登入 YouTube（建議使用次要帳號）。
+2. 用 cookies.txt 類的擴充功能匯出 youtube.com 的 cookies（Netscape 格式），匯出後直接關閉該無痕視窗，
+   否則 cookies 會被輪替而很快失效。
+3. 在 Notebook 執行「(Optional) YouTube cookies」儲存格：填入檔案路徑（例如放在 Google Drive），或留白後上傳檔案。
+4. 執行（或停止後重新執行）Run 儲存格。
+
+該儲存格只是設定環境變數 `YOUTUBE_COOKIES_FILE`；本機或 Docker 執行時，啟動前自行設定這個變數即可。
+cookies 檔等同登入憑證，請勿提交到 repo 或分享給他人。yt-dlp 會把更新後的 cookies 寫回同一個檔案。
+
 # Feature
 - Select the Whisper implementation you want to use between :
    - [openai/whisper](https://github.com/openai/whisper)
