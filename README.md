@@ -175,6 +175,29 @@ flowchart LR
 ## Notebook
 Use [the Colab notebook](notebook/whisper-webui.ipynb) to run this project on Google Colab.
 
+### 從 GitHub 在 Colab 開啟 Notebook
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/joelhoty/Whisper_WebUI/blob/main/notebook/whisper-webui.ipynb)
+
+有兩種方式，結果相同：
+
+- **直接開啟**：點上方的徽章，或開啟這個網址：
+  `https://colab.research.google.com/github/joelhoty/Whisper_WebUI/blob/main/notebook/whisper-webui.ipynb`
+- **從 Colab 選單開啟**：
+  1. 前往 <https://colab.research.google.com>。
+  2. 選「檔案」→「開啟筆記本」，切到「GitHub」分頁。
+  3. 輸入 `joelhoty/Whisper_WebUI` 後按 Enter，分支選 `main`。
+  4. 點選 `notebook/whisper-webui.ipynb`。
+
+開啟後：
+
+1. 選「執行階段」→「變更執行階段類型」，硬體加速器選 GPU（例如 T4）。
+2. 依序執行 Installation 與 Run 儲存格，其餘標示 (Optional) 的儲存格視需要執行。
+3. Run 儲存格輸出的 `gradio.live` 公開網址就是操作介面。
+
+這樣開啟的是 GitHub 上最新版的 Notebook，但不會自動存檔；要保留自己的修改，請選「檔案」→「在雲端硬碟中儲存副本」。
+已存到雲端硬碟的副本不會跟著 GitHub 更新，repo 更新後請重新從 GitHub 開啟。
+
 For a modified copy, push **all project files** to your own repository, then open
 `https://colab.research.google.com/github/YOUR_USER/YOUR_REPO/blob/YOUR_BRANCH/notebook/whisper-webui.ipynb`.
 Choose a GPU runtime (for example T4), set `REPOSITORY_URL` to your repository's HTTPS URL
